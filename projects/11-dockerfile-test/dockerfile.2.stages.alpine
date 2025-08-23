@@ -1,0 +1,36 @@
+# 使用精简的Linux发行版
+# build stage
+FROM node:20-alpine as build-stage
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# 只复制 package.json，利用 Docker 缓存
+COPY package.json ./
+RUN pnpm config set registry https://registry.npmmirror.com/
+RUN pnpm install
+
+# 再复制源码
+COPY . .
+RUN pnpm run build
+
+# production stage  
+FROM node:20-alpine as production-stage
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# 只复制必要文件
+COPY --from=build-stage /app/dist ./dist
+COPY --from=build-stage /app/package.json ./
+
+RUN pnpm config set registry https://registry.npmmirror.com/
+RUN pnpm install --prod
+
+# 清理 pnpm 缓存减小镜像体积
+RUN pnpm store prune && rm -rf /root/.local/share/pnpm
+
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

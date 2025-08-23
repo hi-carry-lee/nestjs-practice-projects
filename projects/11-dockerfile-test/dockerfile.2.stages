@@ -1,0 +1,22 @@
+# build stage
+FROM node:18 as build-stage
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+COPY package.json .
+RUN pnpm config set registry https://registry.npmmirror.com/
+RUN pnpm install
+COPY . .
+RUN pnpm run build
+
+# production stage
+FROM node:18 as production-stage
+# 启用 corepack 并激活 pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY --from=build-stage /app/dist /app
+COPY --from=build-stage /app/package.json /app/package.json
+WORKDIR /app
+# 设置 pnpm 镜像源
+RUN pnpm config set registry https://registry.npmmirror.com/
+RUN pnpm install --production
+EXPOSE 3000
+CMD ["node", "/app/main.js"]

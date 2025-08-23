@@ -1,0 +1,33 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateBbbDto } from './dto/create-bbb.dto';
+import { UpdateBbbDto } from './dto/update-bbb.dto';
+import { RedisClientService } from 'src/redis-client.service';
+
+@Injectable()
+export class BbbService {
+  @Inject(RedisClientService)
+  private readonly redisClientService: RedisClientService;
+
+  create(createBbbDto: CreateBbbDto) {
+    return 'This action adds a new bbb';
+  }
+
+  async findAll() {
+    const value = await this.redisClientService.get('hello-key');
+    console.log('value get from redis is: ', value);
+
+    return `This action returns all bbb`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} bbb`;
+  }
+
+  update(id: number, updateBbbDto: UpdateBbbDto) {
+    return `This action updates a #${id} bbb`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} bbb`;
+  }
+}

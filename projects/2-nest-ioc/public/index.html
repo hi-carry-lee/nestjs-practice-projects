@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/qs@6.10.2/dist/qs.js"></script>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <script>
+      // fetch方式
+      async function fetchData() {
+        const response = await fetch('/api/person/33333');
+        console.log(response.text());
+      }
+      fetchData();
+    </script>
+    <script>
+      async function urlParam() {
+        const res = await axios.get('/api/person/1');
+        console.log('url param: ', res);
+      }
+      urlParam();
+
+      async function queryParam() {
+        const res = await axios.get('/api/person/query?name=zs&age=34');
+        console.log('query param: ', res);
+      }
+      queryParam();
+
+      async function queryParam1() {
+        const res = await axios.get('/api/person/query', {
+          params: {
+            name: 'lisi',
+            age: 29,
+          },
+        });
+        console.log('query param1: ', res);
+      }
+      queryParam1();
+
+      async function formUrlEncoded() {
+        const res = await axios.post(
+          '/api/person/url-encoded',
+          Qs.stringify({
+            name: '光',
+            age: 20,
+          }),
+          {
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          },
+        );
+        console.log('form url encoded: ', res.data);
+      }
+      formUrlEncoded();
+
+      async function formJson() {
+        const res = await axios.post(
+          '/api/person/json',
+          JSON.stringify({
+            name: '光',
+            age: 20,
+          }),
+          {
+            headers: { 'content-type': 'application/json' },
+          },
+        );
+        console.log('form json: ', res.data);
+      }
+      formJson();
+
+      async function formJsonDefault() {
+        const res = await axios.post('/api/person/json', {
+          name: '光',
+          age: 20,
+        });
+        console.log('form json default: ', res.data);
+      }
+      formJsonDefault();
+
+      async function fetchJson() {
+        const res = await fetch('/api/person/json', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: '光',
+            age: 20,
+          }),
+          headers: { 'content-type': 'application/json' },
+        });
+        const data = await res.text();
+        console.log('json fetch: ', data);
+      }
+      fetchJson();
+    </script>
+
+    <input id="fileInput" type="file" multiple />
+    <script>
+      const fileInput = document.querySelector('#fileInput');
+
+      async function formData() {
+        const data = new FormData();
+        data.set('name', '光');
+        data.set('age', 20);
+        data.set('file1', fileInput.files[0]);
+        data.set('file2', fileInput.files[1]);
+
+        const res = await axios.post('/api/person/files', data, {
+          headers: { 'content-type': 'multipart/form-data' },
+        });
+        console.log(res.data);
+      }
+
+      fileInput.onchange = formData;
+    </script>
+  </body>
+</html>

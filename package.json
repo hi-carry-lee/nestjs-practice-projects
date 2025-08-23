@@ -1,0 +1,14 @@
+{
+  "name": "nestjs-projects",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "back10": "cd projects/10-book-store-admin && pnpm dev",
+    "front10": "cd projects/10-book-store-ui && pnpm dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.10.0"
+}

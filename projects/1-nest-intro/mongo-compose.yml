@@ -1,0 +1,42 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: my_mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      # 这里创建的是超级用户，需要在容器创建后，创建普通用户，并为该用户赋予特定的权限和数据库，而不能让app使用超级用户，避免潜在安全风险
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: mydb # 可选，自动建一个数据库
+    volumes:
+      # MongoDB 所有“数据库数据”“集合数据”“索引”等的主数据存放目录
+      - mongo_data:/data/db
+      # MongoDB 配置服务器所需的数据目录，单实例用不到，主要用于Replica Set（副本集）、Sharding（分片）、Config Server等高级特性
+      - mongo_config:/data/configdb
+      # 用于执行初始化脚本，暂时还未确定
+      # - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    healthcheck:
+      # 检查能否作为admin登录，能连通即healthy
+      test:
+        [
+          'CMD',
+          'mongo',
+          '--quiet',
+          '-u',
+          'mongo',
+          '-p',
+          'change_this_password',
+          '--authenticationDatabase',
+          'admin',
+          '--eval',
+          "db.adminCommand('ping')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
+  mongo_config:

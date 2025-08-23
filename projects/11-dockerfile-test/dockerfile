@@ -1,0 +1,30 @@
+# FROM node:18
+# WORKDIR /app
+# COPY package.json .
+# RUN npm config set registry https://registry.npmmirror.com/
+# RUN npm install
+# COPY . .
+# RUN npm run build
+# EXPOSE 3000
+# CMD [ "node", "./dist/main.js" ]
+
+# 上面的配置是使用npm的，下面改为使用pnpm，但是仅限于该项目没有引用monorepo中的其他项目，即它是一个完全独立的项目；
+FROM node:18
+# ① 启用 corepack；Node 16+ 自带，可直接提供 pnpm
+# corepack enable 省去 npm i -g pnpm 这一步；官方推荐做法
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# 仅复制当前包的依赖清单
+COPY package.json ./
+
+# 不带锁文件，因此不能加 --frozen-lockfile
+RUN pnpm install
+
+# 复制源码并编译
+COPY . .
+RUN pnpm run build
+
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

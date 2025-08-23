@@ -1,0 +1,348 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug 1-nest-intro (with DB)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/1-nest-intro/src/main.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/projects/1-nest-intro",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3000",
+        "DB_HOST": "localhost",
+        "DB_PORT": "5432",
+        "DB_USER": "postgres",
+        "DB_PASSWORD": "postgres",
+        "DB_DATABASE": "tasks",
+        "DB_SYNC": "true",
+        "APP_MESSAGE_PREFIX": "Hello",
+        // 🔧 新增：指定 ts-node 使用的 tsconfig.json 文件
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/1-nest-intro/tsconfig.json",
+        // 🔧 新增：覆盖 TypeScript 编译器选项，禁用优化以支持调试
+        "TS_NODE_COMPILER_OPTIONS": "{\"removeComments\":false,\"preserveConstEnums\":true,\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true}"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/projects/1-nest-intro/dist/**/*.js"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/projects/1-nest-intro/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "name": "Debug 2-nest-ioc (no DB)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/2-demo/src/main.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/projects/2-demo",
+
+      // 🔧 关键改进：添加 ts-node/register 用于直接运行 TypeScript
+      // tsconfig-paths/register 用于解析路径别名（如 @/ 等）
+      "runtimeArgs": [
+        "--nolazy", // 禁用V8延迟编译，确保所有代码都被编译
+        "-r",
+        "ts-node/register", // 🆕 让Node.js能直接运行TypeScript文件
+        "-r",
+        "tsconfig-paths/register" // 支持TypeScript路径映射
+      ],
+
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3000",
+
+        // 🔧 指定ts-node使用的配置文件路径
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/2-demo/tsconfig.json",
+
+        // 🔧 关键改进：优化TypeScript编译选项以支持调试
+        // removeComments: false - 保留注释，防止调试信息被删除
+        // preserveConstEnums: true - 保留 const enum，防止被优化
+        // sourceMap: true - 生成源码映射
+        // inlineSourceMap: false - 不内联源码映射，生成独立文件
+        // inlineSources: true - 内联源码内容到源码映射中
+        // noEmitOnError: false - 即使有错误也输出，便于调试
+        // noEmit: false - 允许输出文件
+        "TS_NODE_COMPILER_OPTIONS": "{\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true,\"removeComments\":false,\"preserveConstEnums\":true,\"noEmitOnError\":false,\"noEmit\":false,\"declaration\":false,\"declarationMap\":false,\"incremental\":false,\"tsBuildInfoFile\":null,\"importHelpers\":false,\"skipLibCheck\":true,\"allowSyntheticDefaultImports\":true,\"esModuleInterop\":true}",
+
+        // 🔧 新增：ts-node额外选项 - 确保完整的TypeScript支持
+        "TS_NODE_TRANSPILE_ONLY": "false", // 🆕 不仅转译，也进行类型检查
+        "TS_NODE_TYPE_CHECK": "true", // 🆕 启用类型检查
+        "TS_NODE_FILES": "true", // 🆕 处理files字段中的文件
+        "TS_NODE_COMPILER": "typescript", // 🆕 明确指定使用typescript编译器
+        "TS_NODE_PREFER_TS_EXTS": "true" // 🆕 优先使用.ts扩展名
+      },
+
+      "console": "integratedTerminal",
+      "restart": true,
+
+      // 🔧 改进：更精确的skipFiles配置
+      "skipFiles": [
+        "<node_internals>/**", // 跳过Node.js内部代码
+        "**/node_modules/**", // 跳过所有依赖包
+        "!**/node_modules/ts-node/**", // 🆕 但不跳过ts-node（调试时可能需要）
+        "${workspaceFolder}/projects/2-demo/node_modules/@nestjs/**", // 特别跳过NestJS框架
+        "${workspaceFolder}/projects/2-demo/node_modules/express/**", // 跳过Express
+        "**/route-execution-context.js", // 跳过特定文件
+        "**/router-execution-context.js"
+      ],
+
+      // 🔧 关键改进：源码映射配置优化
+      "sourceMaps": true, // 启用源码映射支持
+
+      // 🔧 改进：更精确的源码映射解析位置
+      "resolveSourceMapLocations": [
+        // 告诉调试器在 src 目录中查找源码映射文件，确保调试器能找到正确的 TypeScript 源文件
+        "${workspaceFolder}/projects/2-demo/src/**", // 🆕 只在src目录中解析
+        "${workspaceFolder}/projects/2-demo/**/*.ts",
+        // 排除 node_modules 中的文件，避免调试器在依赖包中查找源码映射
+        "!**/node_modules/**",
+        // 排除编译输出目录，避免调试器使用编译后的文件
+        "!**/dist/**"
+      ],
+
+      // 🔧 新增：调试时的额外配置 - 优化调试体验
+      "smartStep": true, // 智能单步执行，跳过生成的代码
+      "pauseForSourceMap": false, // 不为源码映射暂停，提高调试启动速度
+      "autoAttachChildProcesses": true // 自动附加到子进程，支持调试多进程应用
+    },
+    {
+      "name": "Test 1-nest-intro",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/1-nest-intro/node_modules/.bin/jest",
+      "args": ["--runInBand", "--no-cache"],
+      "cwd": "${workspaceFolder}/projects/1-nest-intro",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "env": {
+        "NODE_ENV": "test",
+        // 🔧 新增：指定 ts-node 使用的 tsconfig.json 文件
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/1-nest-intro/tsconfig.json",
+        // 🔧 新增：覆盖 TypeScript 编译器选项，禁用优化以支持调试
+        "TS_NODE_COMPILER_OPTIONS": "{\"removeComments\":false,\"preserveConstEnums\":true,\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true}"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/projects/1-nest-intro/dist/**/*.js"]
+    },
+    {
+      "name": "Test 2-nest-ioc",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/2-demo/node_modules/.bin/jest",
+      "args": ["--runInBand", "--no-cache"],
+      "cwd": "${workspaceFolder}/projects/2-demo",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "env": {
+        "NODE_ENV": "test",
+        // 🔧 新增：指定 ts-node 使用的 tsconfig.json 文件
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/2-demo/tsconfig.json",
+        // 🔧 新增：覆盖 TypeScript 编译器选项，禁用优化以支持调试
+        "TS_NODE_COMPILER_OPTIONS": "{\"removeComments\":false,\"preserveConstEnums\":true,\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true}"
+      },
+      "console": "integratedTerminal",
+
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/projects/2-demo/dist/**/*.js"]
+    },
+    {
+      "name": "E2E Test 1-nest-intro",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/1-nest-intro/node_modules/.bin/jest",
+      "args": ["--config", "./test/jest-e2e.json", "--runInBand"],
+      "cwd": "${workspaceFolder}/projects/1-nest-intro",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "env": {
+        "NODE_ENV": "test",
+        // 🔧 新增：指定 ts-node 使用的 tsconfig.json 文件
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/1-nest-intro/tsconfig.json",
+        // 🔧 新增：覆盖 TypeScript 编译器选项，禁用优化以支持调试
+        "TS_NODE_COMPILER_OPTIONS": "{\"removeComments\":false,\"preserveConstEnums\":true,\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true}"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/projects/1-nest-intro/dist/**/*.js"]
+    },
+    {
+      "name": "E2E Test 2-nest-ioc",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/2-demo/node_modules/.bin/jest",
+      "args": ["--config", "./test/jest-e2e.json", "--runInBand"],
+      "cwd": "${workspaceFolder}/projects/2-demo",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "env": {
+        "NODE_ENV": "test",
+        // 🔧 新增：指定 ts-node 使用的 tsconfig.json 文件
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/2-demo/tsconfig.json",
+        // 🔧 新增：覆盖 TypeScript 编译器选项，禁用优化以支持调试
+        "TS_NODE_COMPILER_OPTIONS": "{\"removeComments\":false,\"preserveConstEnums\":true,\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true}"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/projects/2-demo/dist/**/*.js"]
+    },
+    {
+      "name": "Debug 5-context-demo (no DB)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/5-context-demo/src/main.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/projects/5-context-demo",
+
+      // 🔧 关键改进：添加 ts-node/register 用于直接运行 TypeScript
+      // tsconfig-paths/register 用于解析路径别名（如 @/ 等）
+      "runtimeArgs": [
+        "--nolazy", // 禁用V8延迟编译，确保所有代码都被编译
+        "-r",
+        "ts-node/register", // 🆕 让Node.js能直接运行TypeScript文件
+        "-r",
+        "tsconfig-paths/register" // 支持TypeScript路径映射
+      ],
+
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3000",
+
+        // 🔧 指定ts-node使用的配置文件路径
+        "TS_NODE_PROJECT": "${workspaceFolder}/projects/5-context-demo/tsconfig.json",
+
+        // 🔧 关键改进：优化TypeScript编译选项以支持调试
+        // removeComments: false - 保留注释，防止调试信息被删除
+        // preserveConstEnums: true - 保留 const enum，防止被优化
+        // sourceMap: true - 生成源码映射
+        // inlineSourceMap: false - 不内联源码映射，生成独立文件
+        // inlineSources: true - 内联源码内容到源码映射中
+        // noEmitOnError: false - 即使有错误也输出，便于调试
+        // noEmit: false - 允许输出文件
+        "TS_NODE_COMPILER_OPTIONS": "{\"sourceMap\":true,\"inlineSourceMap\":false,\"inlineSources\":true,\"removeComments\":false,\"preserveConstEnums\":true,\"noEmitOnError\":false,\"noEmit\":false,\"declaration\":false,\"declarationMap\":false,\"incremental\":false,\"tsBuildInfoFile\":null,\"importHelpers\":false,\"skipLibCheck\":true,\"allowSyntheticDefaultImports\":true,\"esModuleInterop\":true}",
+
+        // 🔧 新增：ts-node额外选项 - 确保完整的TypeScript支持
+        "TS_NODE_TRANSPILE_ONLY": "false", // 🆕 不仅转译，也进行类型检查
+        "TS_NODE_TYPE_CHECK": "true", // 🆕 启用类型检查
+        "TS_NODE_FILES": "true", // 🆕 处理files字段中的文件
+        "TS_NODE_COMPILER": "typescript", // 🆕 明确指定使用typescript编译器
+        "TS_NODE_PREFER_TS_EXTS": "true" // 🆕 优先使用.ts扩展名
+      },
+
+      "console": "integratedTerminal",
+      "restart": true,
+
+      // 🔧 改进：更精确的skipFiles配置
+      "skipFiles": [
+        "<node_internals>/**", // 跳过Node.js内部代码
+        "**/node_modules/**", // 跳过所有依赖包
+        "!**/node_modules/ts-node/**", // 🆕 但不跳过ts-node（调试时可能需要）
+        "${workspaceFolder}/projects/5-context-demo/node_modules/@nestjs/**", // 特别跳过NestJS框架
+        "${workspaceFolder}/projects/5-context-demo/node_modules/express/**", // 跳过Express
+        "**/route-execution-context.js", // 跳过特定文件
+        "**/router-execution-context.js"
+      ],
+
+      // 🔧 关键改进：源码映射配置优化
+      "sourceMaps": true, // 启用源码映射支持
+
+      // 🔧 改进：更精确的源码映射解析位置
+      "resolveSourceMapLocations": [
+        // 告诉调试器在 src 目录中查找源码映射文件，确保调试器能找到正确的 TypeScript 源文件
+        "${workspaceFolder}/projects/5-context-demo/src/**", // 🆕 只在src目录中解析
+        "${workspaceFolder}/projects/5-context-demo/**/*.ts",
+        // 排除 node_modules 中的文件，避免调试器在依赖包中查找源码映射
+        "!**/node_modules/**",
+        // 排除编译输出目录，避免调试器使用编译后的文件
+        "!**/dist/**"
+      ],
+
+      // 🔧 新增：调试时的额外配置 - 优化调试体验
+      "smartStep": true, // 智能单步执行，跳过生成的代码
+      "pauseForSourceMap": false, // 不为源码映射暂停，提高调试启动速度
+      "autoAttachChildProcesses": true // 自动附加到子进程，支持调试多进程应用
+    },
+    {
+      "name": "10-book-store-admin",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/projects/10-book-store-admin/src/main.ts",
+      "cwd": "${workspaceFolder}/projects/10-book-store-admin",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3000"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "10-book-store-ui",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/projects/10-book-store-ui/src",
+      "sourceMapPathOverrides": {
+        "/@fs/*": "${workspaceFolder}/*",
+        "/src/*": "${webRoot}/*"
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**",
+        "**/vite/**",
+        "**/react/**",
+        "**/react-dom/**",
+        "**/react-refresh/**",
+        "**/@vitejs/**",
+        "**/esbuild/**",
+        "**/rollup/**",
+        "**/webpack/**",
+        "**/chunk-*.js",
+        "**/vendor-*.js",
+        "**/*.hot-update.js",
+        "**/hot-update.js",
+        "**/@react-refresh/**",
+        "**/react-refresh-runtime/**",
+        "**/react-refresh-dom/**"
+      ],
+      "smartStep": true
+    }
+  ]
+}

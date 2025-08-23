@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <input id="fileInput" type="file" multiple />
+    <script>
+      const fileInput = document.querySelector('#fileInput');
+
+      async function formData() {
+        const data = new FormData();
+        data.set('name', 'aaa接口，单文件上传');
+        data.set('aaa', fileInput.files[0]);
+
+        const res = await axios.post('http://localhost:3000/aaa', data);
+        console.log(res);
+      }
+
+      // fileInput.onchange = formData;
+
+      async function formData2() {
+        const data = new FormData();
+        data.set('name', 'bbb接口，多文件上传');
+        [...fileInput.files].forEach((item) => {
+          data.append('bbb', item);
+        });
+
+        const res = await axios.post('http://localhost:3000/bbb', data);
+        console.log(res);
+      }
+
+      // 它会覆盖 fileInput.onchange = formData; 所以只有一个接口会被调用
+      // fileInput.onchange = formData2;
+
+      // 这种方式会让两个接口都被调用
+      // fileInput.onchange = async function () {
+      //   await formData(); // 调用第一个接口
+      //   await formData2(); // 调用第二个接口
+      // };
+
+      async function formData3() {
+        const data = new FormData();
+        data.set('name', '光');
+        data.set('age', 20);
+        data.append('aaa', fileInput.files[0]);
+        data.append('aaa', fileInput.files[1]);
+        data.append('bbb', fileInput.files[2]);
+        data.append('bbb', fileInput.files[3]);
+
+        const res = await axios.post('http://localhost:3000/ccc', data);
+        console.log(res);
+      }
+
+      fileInput.onchange = formData3;
+    </script>
+
+    <div>
+      <span>大文件分片上传</span>
+      <input id="file-slice" type="file" multiple />
+    </div>
+    <script>
+      const fileSliceInput = document.querySelector('#file-slice');
+
+      // 每个文件分片的大小
+      const chunkSize = 20 * 1024; // 20kb
+      // const chunkSize = 20 * 1024 * 1024; // 20MB
+
+      fileSliceInput.onchange = async function () {
+        const file = fileSliceInput.files[0];
+
+        console.log(file);
+
+        const chunks = [];
+        let startPos = 0;
+        // 将文件分片
+        while (startPos < file.size) {
+          chunks.push(file.slice(startPos, startPos + chunkSize));
+          startPos += chunkSize;
+        }
+
+        const randomStr = Math.random().toString().slice(2, 8);
+
+        // const tasks = [];
+        // chunks.map((chunk, index) => {
+        //   const data = new FormData();
+        //   data.set('name', randomStr + '_' + file.name + '-' + index);
+        //   data.append('files', chunk);
+        //   // 每一个 axios 请求都返回Promise
+        //   tasks.push(axios.post('http://localhost:3000/ddd', data));
+        // });
+
+        const tasks = chunks.map((chunk, index) => {
+          const data = new FormData();
+          data.set('name', randomStr + '_' + file.name + '-' + index);
+          data.append('files', chunk);
+          // 每一个 axios 请求都返回Promise
+          return axios.post('http://localhost:3000/ddd', data);
+        });
+
+        // all的参数是  Promise 数组
+        await Promise.all(tasks);
+        axios.get(
+          'http://localhost:3000/merge?name=' + randomStr + '_' + file.name,
+        );
+      };
+    </script>
+  </body>
+</html>

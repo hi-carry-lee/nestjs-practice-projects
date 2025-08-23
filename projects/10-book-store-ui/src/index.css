@@ -1,0 +1,76 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8fafc; /* 如果你想要灰色的页面背景 */
+}
+
+#register-container {
+  width: 400px;
+  margin: 100px auto 0 auto;
+  text-align: center;
+}
+
+#register-container .links {
+  display: flex;
+  justify-content: center;
+}
+
+#register-container .btn {
+  width: 100%;
+}
+
+#login-container {
+  width: 400px;
+  margin: 100px auto 0 auto;
+  text-align: center;
+}
+
+#login-container .links {
+  display: flex;
+  justify-content: center;
+}
+
+#login-container .btn {
+  width: 100%;
+}
+
+/* book list */
+#bookManage {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#bookManage h1 {
+  height: 80px;
+  line-height: 80px;
+  border-bottom: 2px solid #ccc;
+  padding-left: 20px;
+}
+
+#bookManage .content {
+  padding: 20px;
+}
+
+#bookManage .book-list {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#bookManage .book-list .card {
+  margin-left: 30px;
+  margin-bottom: 30px;
+}
+
+#bookManage .book-list .links {
+  display: flex;
+
+  flex-direction: row;
+  justify-content: space-between;
+}

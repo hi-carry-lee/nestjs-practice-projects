@@ -1,0 +1,32 @@
+services: # 开始定义服务（容器）,每个compose都要services
+  postgres: # 具体容器/服务
+    image: postgres:16 # 服务使用的镜像和版本
+    container_name: my_postgres # 容器启动后名字，方便用 docker ps 查找，可选但建议设置
+    environment:
+      # 这里创建的是超级用户，需要在容器创建后，创建普通用户，并为该用户赋予特定的权限和数据库，而不能让app使用超级用户，避免潜在安全风险
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456 # 建议要写，不写默认是 postgres 和随机密码
+      POSTGRES_DB: tasks # 可选，想让容器启动时就有这个数据库写上；不写只会有默认库
+    ports:
+      - '5432:5432' # 端口映射，本地的 5432 对应容器的 5432
+    volumes:
+      # 数据持久化。把数据库数据文件挂载到宿主机，容器删了数据还在
+      - postgres_data:/var/lib/postgresql/data
+      # ./init-user-db.sql 初始化脚本及其位置
+      # 后面是容器内部的路径，Postgres镜像约定好的初始化脚本目录
+      # 暂时还未使用
+      # - ./init-user-db.sql:/docker-entrypoint-initdb.d/init-user-db.sql:ro
+
+    # 极小项目/个人开发阶段可以不用，甚至可以去掉，没啥实际作用。主要是节省一点点启动等待时间，方便重启。
+    # 如果开发环境中涉及复杂依赖（如微服务需要等数据库ready），healthcheck能帮你自动协调顺序。
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U admin -d tasks']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 重启策略。容器异常退出会自动重启（除非你手动 stop），非常适合生产环境。选。但是建议加，提高稳定性
+    restart: unless-stopped
+
+# 声明上面挂载用到的卷名（postgres_data），是 Docker Compose 管理的宿主数据。路径由 Docker 管理，你不用关心具体文件夹。如果上面用了自定义卷，下面必须写“声明”
+volumes:
+  postgres_data:
