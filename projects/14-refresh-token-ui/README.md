@@ -1,11 +1,6 @@
-# 10-book-store-ui
+# 项目介绍
 
-## create project
-
-pnpm create vite@latest
-pnpm add axios
-pnpm add react-router-dom
-pnpm add antd
+这是一个使用 refresh token 的示例项目，主要用于演示如何使用 refresh token 来刷新 access token。
 
 ## antd 和 react19 的兼容性问题
 

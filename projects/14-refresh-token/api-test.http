@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:3000
+
+
+
+###
+# @name login
+POST {{baseUrl}}/user/login
+# you can't add a blank line here
+Content-Type: application/json
+
+{
+  "username": "hello",
+  "password": "123456"
+}
+###
+
+# 使用命名请求的响应
+@access_token = {{login.response.body.access_token}}
+@refresh_token = {{login.response.body.refresh_token}}
+
+###
+GET {{baseUrl}}/nologin
+
+
+### 
+# access the protected route
+GET {{baseUrl}}/guard
+Authorization: Bearer {{access_token}}
+
+###
+# access the no protected route
+GET {{baseUrl}}/nologin
+
+
+###
+# refresh the access token
+# @name refresh
+GET {{baseUrl}}/user/refresh?refresh_token={{refresh_token}}
+
+@access_token1 = {{refresh.response.body.access_token}}
+@refresh_token1 = {{refresh.response.body.refresh_token}}
+
+### 
+# access the protected route
+GET {{baseUrl}}/guard
+Authorization: Bearer {{access_token1}}
