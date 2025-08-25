@@ -8,7 +8,7 @@ ESLint配置使用了 tseslint.configs.recommendedTypeChecked，这启用了严�
   PassportStrategy(Strategy) 返回的类型可能不够明确，配置对象的类型可能不够严格
 */
 
-import { ExtractJwt, JwtFromRequestFunction, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
@@ -21,9 +21,7 @@ interface JwtUserData {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest:
-        // 添加 as JwtFromRequestFunction 是为了解决 Unsafe member access .fromAuthHeaderAsBearerToken on an `error` typed value 的Eslint错误
-        ExtractJwt.fromAuthHeaderAsBearerToken() as JwtFromRequestFunction,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: 'secret',
     });
