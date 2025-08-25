@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3000
+
+###
+# @name login
+POST {{baseUrl}}/login
+# you can't add a blank line here
+Content-Type: application/json
+
+{
+  "username": "test1",
+  "password": "123456"
+}
+
+
+###
+# @name login-token
+POST {{baseUrl}}/login-token
+# you can't add a blank line here
+Content-Type: application/json
+
+{
+  "username": "test1",
+  "password": "123456"
+}
+
+
+###
+GET {{baseUrl}}/list
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdDEiLCJpYXQiOjE3NTYxMzEwOTYsImV4cCI6MTc1NjEzNDY5Nn0.LTH4Sfir7yyQ2ZIdTUziDmYgOMPshE3Mbwjw7RnySrs
+

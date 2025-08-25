@@ -9,6 +9,13 @@ import { AuthService } from './auth/auth.service';
 3. 为什么PassportStrategy不是普通class？ NestJS 这样设计是为了兼容各种 passport 策略（local、jwt、oauth 等），用工厂函数动态生成继承关系和类型。
 */
 
+/*
+当使用 AuthGuard('local') 时，Passport.js 会自动：
+  1. 从请求体中提取 username 和 password 字段
+  2. 调用 LocalStrategy 的 validate 方法
+  3. 传入 这两个参数给 validate 方法
+*/
+
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
