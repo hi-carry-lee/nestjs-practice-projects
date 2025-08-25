@@ -12,6 +12,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UserService } from './user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { IsPublic } from './is-public.decorator';
 
 interface JwtUserData {
   userId: number;
@@ -88,5 +89,16 @@ export class AppController {
   list(@Req() req: Request) {
     console.log(req.user);
     return ['111', '222', '333', '444', '555'];
+  }
+
+  @IsPublic()
+  @Get('public')
+  public() {
+    return 'public api';
+  }
+
+  @Get('bbb')
+  bbb() {
+    return 'bbb';
   }
 }

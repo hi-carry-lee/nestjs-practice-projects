@@ -28,3 +28,11 @@ Content-Type: application/json
 GET {{baseUrl}}/list
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdDEiLCJpYXQiOjE3NTYxMzEwOTYsImV4cCI6MTc1NjEzNDY5Nn0.LTH4Sfir7yyQ2ZIdTUziDmYgOMPshE3Mbwjw7RnySrs
 
+###
+GET {{baseUrl}}/public
+# 访问使用@IsPublic()装饰器的接口，不进行JwtAuthGuard的认证
+
+
+###
+GET {{baseUrl}}/bbb
+# 访问没有使用@IsPublic()装饰器的接口，返回401错误；
