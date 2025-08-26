@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from 'src/local.strategy';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from 'src/jwt.strategy';
+import { GithubStrategy } from 'src/github.strategy';
 
 /*
   为什么 LocalStrategy 要放在 AuthModule 中？
@@ -13,6 +14,6 @@ import { JwtStrategy } from 'src/jwt.strategy';
 
 @Module({
   imports: [UserModule],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GithubStrategy],
 })
 export class AuthModule {}

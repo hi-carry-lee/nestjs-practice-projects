@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ###
 GET {{baseUrl}}/list
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdDEiLCJpYXQiOjE3NTYxMzEwOTYsImV4cCI6MTc1NjEzNDY5Nn0.LTH4Sfir7yyQ2ZIdTUziDmYgOMPshE3Mbwjw7RnySrs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidGVzdDEiLCJpYXQiOjE3NTYyNDc2ODUsImV4cCI6MTc1NjI1MTI4NX0.YMYRUhojwoMd1lfhK1mxOPBYwig_Pa-8Tkta93uGNMI
 
 ###
 GET {{baseUrl}}/public
@@ -36,3 +36,8 @@ GET {{baseUrl}}/public
 ###
 GET {{baseUrl}}/bbb
 # 访问没有使用@IsPublic()装饰器的接口，返回401错误；
+
+
+###
+# github login
+GET {{baseUrl}}/github-login

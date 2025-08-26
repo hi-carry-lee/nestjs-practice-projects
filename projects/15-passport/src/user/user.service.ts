@@ -6,6 +6,7 @@ export class UserService {
     {
       userId: 1,
       username: 'test1',
+      githubId: '58419924',
       password: '123456',
     },
     {
@@ -17,6 +18,10 @@ export class UserService {
 
   findOne(username: string) {
     return this.users.find((user) => user.username === username);
+  }
+
+  findUserByGithubId(githubId: string) {
+    return this.users.find((item) => item.githubId === githubId);
   }
 
   validateUser(username: string, pass: string) {
