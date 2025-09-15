@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:3000
+
+### get config variables from app controller
+GET {{baseUrl}}/config
+
+### 
+GET {{baseUrl}}/config-two
+
+
+### 
+GET {{baseUrl}}/config-three
+
+
+### 
+GET {{baseUrl}}/first/config
+
+### 
+GET {{baseUrl}}/two/config
+
+### 
+GET {{baseUrl}}/two/error
+
+### 
+GET {{baseUrl}}/three/config
+
