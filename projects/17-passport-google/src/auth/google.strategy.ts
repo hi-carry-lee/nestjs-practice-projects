@@ -6,12 +6,17 @@ import { Profile, Strategy } from 'passport-google-oauth20';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
     super({
-      // 完整的在.env文件中
-      clientID: '468969809380-3a1ikrh9mhctev',
-      clientSecret: 'GOCSPX-WUGNW',
-      callbackURL: 'http://localhost:3000/callback/google', // 改回 3000
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      callbackURL: 'http://localhost:3000/callback/google',
       scope: ['email', 'profile'],
     });
+
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      throw new Error(
+        'Google OAuth credentials are not configured. Please check your .env file.',
+      );
+    }
   }
 
   validate(accessToken: string, refreshToken: string, profile: Profile) {

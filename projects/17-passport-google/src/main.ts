@@ -1,3 +1,7 @@
+import * as dotenv from 'dotenv';
+// 想要使用proces.env，必须提前加载
+dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
