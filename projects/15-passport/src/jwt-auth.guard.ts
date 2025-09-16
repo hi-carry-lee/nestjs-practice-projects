@@ -19,6 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (isPublic) {
       return true;
     }
+    // 这里的super调用的是，passport的AuthGuard的canActivate方法
     return super.canActivate(context);
   }
 }
